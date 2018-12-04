@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Locations</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js'></script>
+<script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css' rel='stylesheet' />
+
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+</style>
+</head>
+<body>
+<div id='map'></div>
+<script>
+L.mapbox.accessToken = 'pk.eyJ1IjoiamVyZW15Ym9nZ3MiLCJhIjoiaUczWE5lRSJ9.xki0q39NnjVyT6bk6H9eCw';
+
+var map = L.mapbox.map('map', 'mapbox.streets')
+  .setView([37.8, -96], 4);
+
+var mapLocations = omnivore.geojson('locations.geojson')
+    .on('ready', function() {
+        map.fitBounds(mapLocations.getBounds());
+        mapLocations.eachLayer(function(layer) {
+            var content = '<h2>@' + layer.feature.properties.screen_name + '</h2>' + '<p>' + layer.feature.properties.text + '</p>';
+            layer.bindPopup(content);
+        });
+    })
+    .addTo(map);
+mapLocations.on('click', function(e) {
+    e.layer.openPopup();
+});
+</script>
+</body>
+</html>
